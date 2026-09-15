@@ -1,35 +1,54 @@
 /*
-  Program: Dining Meal Booking Feature
+  Program: Dining App Execution (Part I)
   Student Name: Shimona KERUA
   Student ID: 241367
   Date: 17 July 2026
-  Description: A JavaScript program on classes,
-  objects, constructors, private fields and methods.
 */
 
-// Import the MealBooking class from File 1
-const MealBooking = require("./MealBooking.js");
+const Student = require("../Lab-2/Lab-2_Part-I/Student.js");
+const MealBooking = require("./MealBookings.js");
 
-// 1. Create a new instance (Object) of the MealBooking class
-const studentBooking = new MealBooking({
-  studentId: "STU98765",
-  studentName: "Alex Mercer",
-  mealDate: "2026-07-22",
-  mealType: "Dinner",
-  quantity: 2,
-  dietaryNote: "Gluten-Free"
-});
+const bookingDatabase = [];
 
-// 2. Display the initial setup using the summary method
-console.log("--- Initial Registration State ---");
-console.log(studentBooking.getSummary());
-console.log(`Calculated Cost: $${studentBooking.calculateTotal().toFixed(2)}`);
+function isDuplicateBooking(newBooking) {
+  return bookingDatabase.some(
+    booking =>
+      booking.student.studentId === newBooking.student.studentId &&
+      booking.mealDate === newBooking.mealDate &&
+      booking.mealType === newBooking.mealType
+  );
+}
 
-// 3. Demonstrate using a setter to safely change values externally
-console.log("\n--- Simulating Update via Setters ---");
-studentBooking.quantity = 3;            // Modifying private quantity field
-studentBooking.bookingStatus = "Confirmed"; // Modifying private status field
+function processNewBooking(studentObj, mealDate, mealType, quantity, dietaryNote) {
+  try {
+    const booking = new MealBooking(studentObj, mealDate, mealType, quantity, dietaryNote);
 
-// 4. Call methods again to see updated results
-console.log(studentBooking.getSummary());
-console.log(`Updated Calculated Cost: $${studentBooking.calculateTotal().toFixed(2)}`);
+    if (isDuplicateBooking(booking)) {
+      throw new Error(
+        `Duplicate booking detected! Student ${studentObj.studentId} already has a ${booking.mealType} booking for ${booking.mealDate}.`
+      );
+    }
+
+    bookingDatabase.push(booking);
+    console.log(booking.getSummary());
+    return booking;
+  } catch (error) {
+    console.error(`\n❌ ERROR: ${error.message}`);
+    return null;
+  }
+}
+
+function main() {
+  console.log("\n========================================");
+  console.log("      DINING APP INITIALIZATION         ");
+  console.log("========================================\n");
+
+  try {
+    const student1 = new Student("DWU2026001", "Jason", "Nakukanai");
+    processNewBooking(student1, "2026-07-18", "Lunch", 2, "No peanuts");
+  } catch (err) {
+    console.error(`Error: ${err.message}`);
+  }
+}
+
+main();
