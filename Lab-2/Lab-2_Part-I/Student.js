@@ -20,6 +20,7 @@ class Student {
   get studentId() {
     return this.#studentId;
   }
+
   set studentId(value) {
     if (!value || value.trim() === "") {
       throw new Error("Student ID cannot be empty.");
@@ -30,6 +31,7 @@ class Student {
   get firstName() {
     return this.#firstName;
   }
+
   set firstName(value) {
     if (!value || value.trim() === "") {
       throw new Error("First name cannot be empty.");
@@ -40,6 +42,7 @@ class Student {
   get lastName() {
     return this.#lastName;
   }
+
   set lastName(value) {
     if (!value || value.trim() === "") {
       throw new Error("Last name cannot be empty.");
@@ -54,7 +57,7 @@ class Student {
 
   displayInfo() {
     return `========================================\n` +
-           `          STUDENT DETAILS          \n` +
+           `          STUDENT INFORMATION          \n` +
            `========================================\n` +
            `Student ID: ${this.#studentId}\n` +
            `Student Name: ${this.getFullName()}\n` +
