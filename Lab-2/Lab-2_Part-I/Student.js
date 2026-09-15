@@ -1,5 +1,5 @@
 /*
-  Program: Student Identity Class
+  Program: IS305 Lab 2 - Student Identity Class
   Student Name: Shimona KERUA
   Student ID: 241367
   Date: 17 July 2026
@@ -16,7 +16,7 @@ class Student {
     this.lastName = lastName;
   }
 
-  // Getters & Setters with validation
+  // --- Getters & Setters ---
   get studentId() {
     return this.#studentId;
   }
@@ -47,14 +47,14 @@ class Student {
     this.#lastName = value.trim();
   }
 
-  // Required Methods
+  // --- Class Methods ---
   getFullName() {
     return `${this.#firstName} ${this.#lastName}`;
   }
 
   displayInfo() {
     return `========================================\n` +
-           `          STUDENT INFORMATION          \n` +
+           `          STUDENT DETAILS          \n` +
            `========================================\n` +
            `Student ID: ${this.#studentId}\n` +
            `Student Name: ${this.getFullName()}\n` +
