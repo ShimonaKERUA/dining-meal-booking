@@ -1,84 +1,126 @@
 /*
-  Program: Dining Meal Booking Feature
-  Student Name:Shimona KERUA
+  Program: Dining Meal Booking Class
+  Student Name: Shimona KERUA
   Student ID: 241367
   Date: 17 July 2026
-  Description: A JavaScript program on classes,
-  objects, constructors, private fields and methods.
 */
 
+// Step out of 'Part I' and navigate into 'Lab-2/Lab-2_Part-I/Student.js'
+const Student = require("../Lab-2/Lab-2_Part-I/Student.js");
+
+// Standard Meal Prices in PGK
+const MEAL_PRICES = {
+  Breakfast: 10.00,
+  Lunch: 15.00,
+  Dinner: 20.00
+};
+
 class MealBooking {
-  // 1. Declare Private Fields
-  #studentId;
-  #studentName;
+  #student;
   #mealDate;
   #mealType;
   #quantity;
   #dietaryNote;
   #bookingStatus;
 
-  // 2. Constructor
-  constructor({ studentId, studentName, mealDate, mealType, quantity, dietaryNote }) {
-    this.#studentId = studentId;
-    this.#studentName = studentName;
-    this.#mealDate = mealDate;
-    this.#mealType = mealType;
-    this.#quantity = quantity;
-    this.#dietaryNote = dietaryNote || "None";
-    this.#bookingStatus = "Pending"; // Default assignment
-  }
-
-  // 3. Getters and Setters
-  get studentId() { return this.#studentId; }
-  set studentId(value) { this.#studentId = value; }
-
-  get studentName() { return this.#studentName; }
-  set studentName(value) { this.#studentName = value; }
-
-  get mealDate() { return this.#mealDate; }
-  set mealDate(value) { this.#mealDate = value; }
-
-  get mealType() { return this.#mealType; }
-  set mealType(value) { this.#mealType = value; }
-
-  get quantity() { return this.#quantity; }
-  set quantity(value) { 
-    if (value > 0) {
-      this.#quantity = value; 
-    } else {
-      console.log("Quantity must be greater than 0.");
+  constructor(student, mealDate, mealType, quantity, dietaryNote = "None") {
+    // Verify valid Student object reference
+    if (!student || !(student instanceof Student)) {
+      throw new Error("A valid Student object reference must be provided.");
     }
+    this.#student = student;
+
+    this.mealDate = mealDate;
+    this.mealType = mealType;
+    this.quantity = quantity;
+    this.#dietaryNote = dietaryNote && dietaryNote.trim() !== "" ? dietaryNote.trim() : "None";
+    this.#bookingStatus = "Pending";
   }
 
-  get dietaryNote() { return this.#dietaryNote; }
-  set dietaryNote(value) { this.#dietaryNote = value; }
+  // --- Getters & Setters ---
+  get student() {
+    return this.#student;
+  }
 
-  get bookingStatus() { return this.#bookingStatus; }
-  set bookingStatus(value) { this.#bookingStatus = value; }
+  get mealDate() {
+    return this.#mealDate;
+  }
 
-  // 4. Methods
+  set mealDate(value) {
+    if (!value || value.trim() === "") {
+      throw new Error("Meal date is required.");
+    }
+    this.#mealDate = value.trim();
+  }
+
+  get mealType() {
+    return this.#mealType;
+  }
+
+  set mealType(value) {
+    if (!value) throw new Error("Meal type is required.");
+    const formattedType = value.trim().charAt(0).toUpperCase() + value.trim().slice(1).toLowerCase();
+    if (!["Breakfast", "Lunch", "Dinner"].includes(formattedType)) {
+      throw new Error("Invalid meal type. Must be Breakfast, Lunch, or Dinner.");
+    }
+    this.#mealType = formattedType;
+  }
+
+  get quantity() {
+    return this.#quantity;
+  }
+
+  set quantity(value) {
+    const parsedQty = parseInt(value, 10);
+    if (isNaN(parsedQty) || parsedQty < 1) {
+      throw new Error("Quantity must be a valid number of at least 1.");
+    }
+    this.#quantity = parsedQty;
+  }
+
+  get dietaryNote() {
+    return this.#dietaryNote;
+  }
+
+  set dietaryNote(value) {
+    this.#dietaryNote = value;
+  }
+
+  get bookingStatus() {
+    return this.#bookingStatus;
+  }
+
+  set bookingStatus(value) {
+    this.#bookingStatus = value;
+  }
+
+  // --- Status Modifiers ---
+  confirmBooking() {
+    this.#bookingStatus = "Confirmed";
+  }
+
+  cancelBooking() {
+    this.#bookingStatus = "Cancelled";
+  }
+
+  // --- Core Methods ---
   calculateTotal() {
-    // Arbitrary baseline prices assigned based on meal tier selection
-    let pricePerMeal = 10.00; 
-    
-    const type = this.#mealType.toLowerCase();
-    if (type === "breakfast") pricePerMeal = 8.50;
-    else if (type === "lunch") pricePerMeal = 12.00;
-    else if (type === "dinner") pricePerMeal = 15.00;
-
-    return pricePerMeal * this.#quantity;
+    const unitPrice = MEAL_PRICES[this.#mealType] || 0;
+    return unitPrice * this.#quantity;
   }
 
   getSummary() {
-    return `
-=== Booking Summary ===
-Status: [${this.#bookingStatus}]
-Student: ${this.#studentName} (ID: ${this.#studentId})
-Details: ${this.#quantity}x ${this.#mealType} on ${this.#mealDate}
-Dietary Notes: ${this.#dietaryNote}
-=======================`;
+    return `========================================
+          BOOKING RECEIPT
+========================================
+Student: ${this.#student.getFullName()} (${this.#student.studentId})
+Meal: ${this.#mealType} x ${this.#quantity}
+Date: ${this.#mealDate}
+Dietary note: ${this.#dietaryNote}
+Status: ${this.#bookingStatus}
+Total cost: K${this.calculateTotal().toFixed(2)}
+========================================`;
   }
 }
 
-// Export the class to allow usage within DiningApp.js
 module.exports = MealBooking;
